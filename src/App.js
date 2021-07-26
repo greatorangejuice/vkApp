@@ -29,13 +29,9 @@ const App = () => {
 			}
 		});
 		async function fetchData() {
-			const data = await fetch('http://localhost:3005/api/users/search')
-				.then(res => res.json())
-			console.log(data)
 			const user = await bridge.send('VKWebAppGetUserInfo');
 			setUser(user);
 			setPopout(null);
-			console.log(user)
 		}
 		fetchData();
 	}, []);
