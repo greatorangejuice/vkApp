@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import bridge from '@vkontakte/vk-bridge';
 import ScreenSpinner from '@vkontakte/vkui/dist/components/ScreenSpinner/ScreenSpinner';
 import '@vkontakte/vkui/dist/vkui.css';
+import {Route} from 'react-router-dom';
 
 import Home from './panels/Home';
 import OrderForm from "./panels/Order-form";
@@ -46,11 +47,21 @@ const App = () => {
 	};
 
 	return (
-		<View activePanel={activePanel} popout={popout}>
-			<Home id={ROUTES.HOME} fetchedUser={fetchedUser} go={go} />
-			<OrderForm id={ROUTES.FORM} go={go} />
-			<Order id={ROUTES.TESTFORM} go={go} />
-		</View>
+		// <View activePanel={activePanel} popout={popout}>
+		// 	<Home id={ROUTES.HOME} fetchedUser={fetchedUser} go={go} />
+		// 	<OrderForm id={ROUTES.FORM} go={go} />
+		// 	<Order id={ROUTES.TESTFORM} go={go} />
+		// </View>
+		<div>
+			<nav>
+				<ul>
+					<li><a href="/order">Order</a></li>
+				</ul>
+			</nav>
+			<Route path='/' exact render={() => <h1>HomePage</h1>}/>
+			<Route path='/order' component={OrderForm} id={'hi'}/>
+		</div>
+
 	);
 }
 

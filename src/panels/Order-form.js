@@ -1,10 +1,28 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {Button, Checkbox, FormLayout, Input, Link, Panel, PanelHeader, Select, Textarea, FormItem} from "@vkontakte/vkui";
 import * as PropTypes from "prop-types";
 import Home from "./Home";
+import bridge from "@vkontakte/vk-bridge";
 
 
-const OrderForm = ({id, go}) => {
+const OrderForm = () => {
+
+    useEffect(() => {
+        bridge.subscribe(({ detail: { type, data }}) => {
+            if (type === 'VKWebAppUpdateConfig') {
+                const schemeAttribute = document.createAttribute('scheme');
+                schemeAttribute.value = data.scheme ? data.scheme : 'client_light';
+                document.body.attributes.setNamedItem(schemeAttribute);
+            }
+        });
+        async function fetchData() {
+            const data = await fetch('http://localhost:3005/api/subjects')
+                .then(res => res.json())
+            console.log(data.results)
+        }
+        fetchData();
+    }, []);
+
     const faculties = [
         {name: 'БГУИР', value: 'bsuir'},
         {name: 'БНТУ', value: 'bntu'},
@@ -29,34 +47,30 @@ const OrderForm = ({id, go}) => {
 
 
     return (
-        <Panel id={id}>
-            <PanelHeader>
-                Создание заявки
-            </PanelHeader>
+        <Panel>
             <FormLayout>
                 <FormItem
                     top="Курс"
                 >
                     <Input
                         name="course"
-                        value={1}
+                        value={state.course}
                         onChange={(e) => {handleChange(e)}}
                     />
                 </FormItem>
-                <FormItem top="Пароль">
+                <FormItem top="Факультет">
                     <Input type="password" placeholder="Введите пароль" />
                 </FormItem>
             </FormLayout>
-            <Button onClick={go} data-to='home'>Назад</Button>
         </Panel>
     )
 }
 
 
-OrderForm.propTypes = {
-    id: PropTypes.string.isRequired,
-    go: PropTypes.func.isRequired,
-};
+// OrderForm.propTypes = {
+//     id: PropTypes.string.isRequired,
+//     go: PropTypes.func.isRequired,
+// };
 
 
 export default OrderForm;
