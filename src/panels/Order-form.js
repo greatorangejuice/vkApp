@@ -1,6 +1,8 @@
 import React, {useState} from "react";
-import {Button, Checkbox, FormLayout, Input, Link, Panel, PanelHeader, Select, Textarea} from "@vkontakte/vkui";
-import FormField from "@vkontakte/vkui/dist/components/FormField/FormField";
+import {Button, Checkbox, FormLayout, Input, Link, Panel, PanelHeader, Select, Textarea, FormItem} from "@vkontakte/vkui";
+import * as PropTypes from "prop-types";
+import Home from "./Home";
+
 
 const OrderForm = ({id, go}) => {
     const faculties = [
@@ -13,61 +15,50 @@ const OrderForm = ({id, go}) => {
         subjectId: null,
         faculty: null,
     }
-    const {state, setState} = useState(initialState)
+    const [state, setState] = useState(initialState)
+
+    const handleChange = (e, field = 'course') => {
+        console.log('PREVIOUS STATE')
+        console.log(`State: ${JSON.stringify(state)}`)
+        console.log('================')
+        // console.log(e.target.value)
+        setState({...state, [`${field}`]: e.target.value})
+        // console.log(`State: ${state.course}`)
+        console.log(`State: ${JSON.stringify(state)}`)
+    }
+
 
     return (
         <Panel id={id}>
             <PanelHeader>
                 Создание заявки
             </PanelHeader>
-
             <FormLayout>
-                <FormField
-                    top='Курс'
-                    required
-                    // status={course ? 'valid' : 'error'}
-                    // bottom={course ? 'Электронная почта введена верно!' : 'Пожалуйста, введите электронную почту'}
+                <FormItem
+                    top="Курс"
                 >
                     <Input
-                        type="number"
-                        max='7'
                         name="course"
+                        value={1}
+                        onChange={(e) => {handleChange(e)}}
                     />
-                </FormField>
-
-                <FormField top="Факультет">
-                    <Select
-                        placeholder="Выберите пол"
-                        options={[{
-                            value: '0', label: 'Мужской'
-                        }, {
-                            value: '1', label: 'Женский'
-                        }
-                        ]}
-                    />
-                </FormField>
-
-                <FormField top="Предмет">
-                    <Select
-                        placeholder="Выберете предмет"
-                        options={[{
-                            value: '0', label: 'Мужской'
-                        }, {
-                            value: '1', label: 'Женский'
-                        }
-                        ]}
-                    />
-                </FormField>
-
-                <FormField top="О себе">
-                    <Textarea/>
-                </FormField>
-                <Checkbox>Согласен со всем <Link>этим</Link></Checkbox>
-                    <Button onClick={() => {console.log('click')}} size="l" stretched>Зарегистрироваться</Button>
+                </FormItem>
+                <FormItem top="Пароль">
+                    <Input type="password" placeholder="Введите пароль" />
+                </FormItem>
             </FormLayout>
             <Button onClick={go} data-to='home'>Назад</Button>
         </Panel>
     )
 }
 
+
+OrderForm.propTypes = {
+    id: PropTypes.string.isRequired,
+    go: PropTypes.func.isRequired,
+};
+
+
 export default OrderForm;
+
+

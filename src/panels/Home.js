@@ -1,12 +1,24 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import Panel from '@vkontakte/vkui/dist/components/Panel/Panel';
-import PanelHeader from '@vkontakte/vkui/dist/components/PanelHeader/PanelHeader';
-import Button from '@vkontakte/vkui/dist/components/Button/Button';
-import Group from '@vkontakte/vkui/dist/components/Group/Group';
-import Div from '@vkontakte/vkui/dist/components/Div/Div';
+import {Button, Group, Panel, PanelHeader, Div, FormLayout, FormItem, Input} from "@vkontakte/vkui";
 
 const Home = ({id, go, fetchedUser}) => {
+    const initialState = {
+        course: 1,
+        subjectId: null,
+        faculty: null,
+    }
+    const [state, setState] = useState(initialState)
+
+    const handleChange = (e, field = 'course') => {
+        console.log('PREVIOUS STATE')
+        console.log(`State: ${JSON.stringify(state)}`)
+        console.log('================')
+        // console.log(e.target.value)
+        setState({...state, [`${field}`]: e.target.value})
+        // console.log(`State: ${state.course}`)
+        console.log(`State: ${JSON.stringify(state)}`)
+    }
     return (
         <Panel id={id}>
             <PanelHeader>BSUIRHub miniApp</PanelHeader>
@@ -20,11 +32,26 @@ const Home = ({id, go, fetchedUser}) => {
                     <Button size="m" level="2"  onClick={go} data-to="form">
                         Создать новое задание
                     </Button>
-                    <Button size="m" level="2" mode='secondary' onClick={go} data-to="form">
+                    <Button size="m" level="2" mode='secondary' onClick={go} data-to="order">
                         Посмотреть текущие
                     </Button>
                 </Div>
             </Group>
+
+            <FormLayout>
+                <FormItem
+                    top="Курс"
+                >
+                    <Input
+                        name="course"
+                        value={state.course}
+                        onChange={(e) => {handleChange(e)}}
+                    />
+                </FormItem>
+                <FormItem top="Пароль">
+                    <Input type="password" placeholder="Введите пароль" />
+                </FormItem>
+            </FormLayout>
         </Panel>
     )
 };

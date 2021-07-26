@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import bridge from '@vkontakte/vk-bridge';
-import View from '@vkontakte/vkui/dist/components/View/View';
 import ScreenSpinner from '@vkontakte/vkui/dist/components/ScreenSpinner/ScreenSpinner';
 import '@vkontakte/vkui/dist/vkui.css';
 
 import Home from './panels/Home';
-import Persik from './panels/Persik';
 import OrderForm from "./panels/Order-form";
+import {View} from "@vkontakte/vkui";
+import Order from "./panels/Form";
 
 const ROUTES = {
 	HOME: 'home',
-	FORM: 'form'
+	FORM: 'form',
+	TESTFORM: 'order'
 }
-
-
 
 const App = () => {
 	const [activePanel, setActivePanel] = useState(ROUTES.HOME);
@@ -50,6 +49,7 @@ const App = () => {
 		<View activePanel={activePanel} popout={popout}>
 			<Home id={ROUTES.HOME} fetchedUser={fetchedUser} go={go} />
 			<OrderForm id={ROUTES.FORM} go={go} />
+			<Order id={ROUTES.TESTFORM} go={go} />
 		</View>
 	);
 }
