@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Button, DatePicker, FormItem, FormLayout, Input, Panel, Select, Textarea} from "@vkontakte/vkui";
 import bridge from "@vkontakte/vk-bridge";
+import axios from "axios";
 
 
 const OrderForm = () => {
@@ -15,17 +16,31 @@ const OrderForm = () => {
         });
 
         async function fetchData() {
-            const subjects = await fetch('http://localhost:3005/api/subjects')
-                .then(res => res.json())
-            setSubjects(subjects.results)
+            const subjects = await axios.get('http://localhost:3005/api/subjects')
+                .then(res => {
+                    return res.data.results
+                })
+            setSubjects(subjects)
+            const taskTypes = await axios.get('http://localhost:3005/api/task-types')
+                .then(res => {
+                    return res.data.results
+                })
+            setTaskTypes(taskTypes)
+
+            const faculties = await axios.get('http://localhost:3005/api/faculties')
+                .then(res => {
+                    return res.data.results
+                })
+            setFaculties(faculties)
+            console.log(faculties)
             setOrderState({...orderState, isLoaded: true})
 
-            const faculties = await fetch('https://journal.bsuir.by/api/v1/faculties')
-                .then(res => res.json())
-            console.log(faculties)
+            // const faculties = await axios.get('https://journal.bsuir.by/api/v1/faculties')
+            //     .then(res => res.json())
+            // console.log(faculties)
 
-            const user = await bridge.send('VKWebAppGetUserInfo');
-            console.log(user)
+            // const user = await bridge.send('VKWebAppGetUserInfo');
+            // console.log(user)
         }
 
         fetchData();
@@ -34,6 +49,7 @@ const OrderForm = () => {
     const initialState = {
         course: 1,
         subjectId: null,
+        university: null,
         faculty: null,
         description: null,
         deadline: null,
@@ -58,30 +74,24 @@ const OrderForm = () => {
             }
         }
     }
-    const taskTypes = [
-        {
-            name: 'Лабораторная работа',
-            id: 0,
-        },
-        {
-            name: 'Курсовая работа',
-            id: 1,
-        },
-        {
-            name: 'Контрольная работа',
-            id: 2,
-        },
-    ]
 
     const [orderState, setOrderState] = useState(initialState)
     const [subjects, setSubjects] = useState([])
+    const [taskTypes, setTaskTypes] = useState([])
     const [faculties, setFaculties] = useState([])
     const [formControls, setFormControls] = useState(initialControls)
 
 
-    const submitForm = () => {
+    const submitForm = async () => {
         console.log(orderState)
-
+        // try {
+        //     return await axios.post('http://localhost:3005/api/tasks/createfromvk', {
+        //         title: 'Hey',
+        //         description: 'Test'
+        //     })
+        // } catch (e) {
+        //     console.log(e)
+        // }
     }
 
     const handleChange = (e) => {
@@ -107,7 +117,37 @@ const OrderForm = () => {
     return (
         <Panel>
             <FormLayout>
-                {formControls.course.touched ? <div>1</div> : <div>2</div>}
+
+                <FormItem top="Университет">
+                    <Select
+                        placeholder="Не выбран"
+                        name='university'
+                        options={faculties.map((faculty) => (
+                            {label: faculty.university.title, value: faculty.university.id}
+                        ))}
+                        onChange={(e) => {
+                            handleChange(e)
+                        }}
+                    />
+                </FormItem>
+
+                <FormItem top="Факультет">
+                    <Select
+                        disabled={!orderState.university}
+                        placeholder="Не выбран"
+                        name='faculty'
+                        options={faculties.filter( (faculty) => {
+                           return faculty.university.id === +orderState.university
+                        } ).map((facultyItem) => (
+                            {label: facultyItem.title, value: facultyItem.id}
+                        ) )}
+                        onChange={(e) => {
+                            handleChange(e)
+                        }}
+                    />
+                </FormItem>
+
+                {/*{formControls.course.touched ? <div>1</div> : <div>2</div>}*/}
                 <FormItem
                     top="Курс"
                 >
@@ -120,22 +160,13 @@ const OrderForm = () => {
                         }}
                     />
                 </FormItem>
-                <FormItem top="Факультет">
-                    <Input
-                        name='faculty'
-                        placeholder="Не выбрано"
-                        onChange={(e) => {
-                            handleChange(e)
-                        }}
-                    />
-                </FormItem>
 
                 <FormItem top="Тип задания">
                     <Select
                         placeholder="Не выбран"
-                        name='subjectId'
+                        name='taskType'
                         options={taskTypes.map((task) => (
-                            {label: task.name, value: task.id}
+                            {label: task.title, value: task.id}
                         ))}
                         onChange={(e) => {
                             handleChange(e)
@@ -178,7 +209,9 @@ const OrderForm = () => {
                     />
                 </FormItem>
 
-                <Button onClick={submitForm}>Отправить</Button>
+                <Button
+                    disabled={!orderState.deadline}
+                    onClick={submitForm}>Отправить</Button>
             </FormLayout>
         </Panel>
     )
