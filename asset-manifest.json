@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.js": "/vkApp/static/js/main.8a4a782b.chunk.js",
+    "main.js.map": "/vkApp/static/js/main.8a4a782b.chunk.js.map",
+    "runtime-main.js": "/vkApp/static/js/runtime-main.61c462d9.js",
+    "runtime-main.js.map": "/vkApp/static/js/runtime-main.61c462d9.js.map",
+    "static/css/2.18f36260.chunk.css": "/vkApp/static/css/2.18f36260.chunk.css",
+    "static/js/2.2be877ba.chunk.js": "/vkApp/static/js/2.2be877ba.chunk.js",
+    "static/js/2.2be877ba.chunk.js.map": "/vkApp/static/js/2.2be877ba.chunk.js.map",
+    "index.html": "/vkApp/index.html",
+    "precache-manifest.fb7bd4b2cc3ddb3aad837bb04e7c275b.js": "/vkApp/precache-manifest.fb7bd4b2cc3ddb3aad837bb04e7c275b.js",
+    "service-worker.js": "/vkApp/service-worker.js",
+    "static/css/2.18f36260.chunk.css.map": "/vkApp/static/css/2.18f36260.chunk.css.map",
+    "static/js/2.2be877ba.chunk.js.LICENSE.txt": "/vkApp/static/js/2.2be877ba.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.61c462d9.js",
+    "static/css/2.18f36260.chunk.css",
+    "static/js/2.2be877ba.chunk.js",
+    "static/js/main.8a4a782b.chunk.js"
+  ]
+}
