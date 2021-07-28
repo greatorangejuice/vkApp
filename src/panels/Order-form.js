@@ -3,6 +3,7 @@ import {Button, DatePicker, FormItem, FormLayout, Input, Panel, Select, Textarea
 import bridge from "@vkontakte/vk-bridge";
 import axios from "axios";
 import {withRouter} from 'react-router-dom';
+import * as moment from "moment"
 
 
 const OrderForm = (props) => {
@@ -91,7 +92,7 @@ const OrderForm = (props) => {
                 subjectId: +state.subjectId,
                 customerVkId: user.id,
                 title: 'new Task',
-                dueDate: new Date(state.dueDate.year, state.dueDate.month, state.dueDate.day)
+                dueDate: moment({day: state.dueDate.day, month: state.dueDate.month, year: state.dueDate.year}).add(-1, "month")
             }
             console.log(data)
             return await axios.post('http://localhost:3005/api/tasks/createfromvk', data).then(
@@ -102,6 +103,12 @@ const OrderForm = (props) => {
         } catch (e) {
             console.log(e)
         }
+    }
+
+    const test = () => {
+        const state = {...orderState};
+        console.log(state)
+        console.log(moment({day: state.dueDate.day, month: state.dueDate.month, year: state.dueDate.year}).add(-1, "month"))
     }
 
     const handleChange = (e) => {

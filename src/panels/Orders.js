@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import bridge from "@vkontakte/vk-bridge";
 import axios from "axios";
 import {Div, Panel} from "@vkontakte/vkui";
+import * as moment from "moment"
 
 const Orders = () => {
 
@@ -14,7 +15,6 @@ const Orders = () => {
                     return res.data.results
                 })
             setOrders(orders)
-            console.log(orders)
             setState({...state, isLoaded: true})
         }
 
@@ -43,6 +43,7 @@ const Orders = () => {
                             <div>
                                 <div>{order.taskType.title} по предмету {order.subject.title}</div>
                                 <div>Статус: {order.status ? <p>Кто-то взял и скоро свяжется :)</p> : <p>Пока никто не взял</p>}</div>
+                                <div>Срок выполнения: до {moment(order.dueDate).format('DD MM YYYY')}</div>
                             </div>
                         </div>
 

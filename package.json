@@ -18,6 +18,7 @@
     "react-scripts": "^3.4.1"
   },
   "dependencies": {
+    "@types/moment": "^2.13.0",
     "@vkontakte/icons": "^1.18.2",
     "@vkontakte/vk-bridge": "^2.4.4",
     "@vkontakte/vk-miniapps-deploy": "^0.0.17",
@@ -29,6 +30,7 @@
     "eruda": "^2.2.0",
     "eruda-code": "^2.0.0",
     "eruda-dom": "^2.0.0",
+    "moment": "^2.29.1",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
