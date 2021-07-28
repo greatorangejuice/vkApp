@@ -2,10 +2,10 @@ import React, {useEffect, useState} from "react";
 import {Button, DatePicker, FormItem, FormLayout, Input, Panel, Select, Textarea} from "@vkontakte/vkui";
 import bridge from "@vkontakte/vk-bridge";
 import axios from "axios";
+import {withRouter} from 'react-router-dom';
 
 
-const OrderForm = () => {
-
+const OrderForm = (props) => {
     useEffect(() => {
         bridge.subscribe(({detail: {type, data}}) => {
             if (type === 'VKWebAppUpdateConfig') {
@@ -32,15 +32,10 @@ const OrderForm = () => {
                     return res.data.results
                 })
             setFaculties(faculties)
-            console.log(faculties)
+
+            const user = await bridge.send('VKWebAppGetUserInfo');
+            setUser(user);
             setOrderState({...orderState, isLoaded: true})
-
-            // const faculties = await axios.get('https://journal.bsuir.by/api/v1/faculties')
-            //     .then(res => res.json())
-            // console.log(faculties)
-
-            // const user = await bridge.send('VKWebAppGetUserInfo');
-            // console.log(user)
         }
 
         fetchData();
@@ -49,11 +44,12 @@ const OrderForm = () => {
     const initialState = {
         course: 1,
         subjectId: null,
-        university: null,
-        faculty: null,
+        universityId: null,
+        facultyId: null,
         description: null,
-        deadline: null,
-        taskType: null,
+        dueDate: null,
+        taskTypeId: null,
+        customerVkId: null,
         isLoaded: false,
     }
     const initialControls = {
@@ -80,18 +76,32 @@ const OrderForm = () => {
     const [taskTypes, setTaskTypes] = useState([])
     const [faculties, setFaculties] = useState([])
     const [formControls, setFormControls] = useState(initialControls)
+    const [user, setUser] = useState(null);
 
 
     const submitForm = async () => {
         console.log(orderState)
-        // try {
-        //     return await axios.post('http://localhost:3005/api/tasks/createfromvk', {
-        //         title: 'Hey',
-        //         description: 'Test'
-        //     })
-        // } catch (e) {
-        //     console.log(e)
-        // }
+        try {
+            const state = {...orderState};
+            const data = {
+                ...orderState,
+                taskTypeId: +state.taskTypeId,
+                universityId: +state.universityId,
+                facultyId: +state.facultyId,
+                subjectId: +state.subjectId,
+                customerVkId: user.id,
+                title: 'new Task',
+                dueDate: new Date(state.dueDate.year, state.dueDate.month, state.dueDate.day)
+            }
+            console.log(data)
+            return await axios.post('http://localhost:3005/api/tasks/createfromvk', data).then(
+                () => {
+                    goToMain()
+                }
+            )
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     const handleChange = (e) => {
@@ -113,6 +123,9 @@ const OrderForm = () => {
         )
     }
 
+    const goToMain = () => {
+        props.history.push('/')
+    }
 
     return (
         <Panel>
@@ -121,7 +134,7 @@ const OrderForm = () => {
                 <FormItem top="Университет">
                     <Select
                         placeholder="Не выбран"
-                        name='university'
+                        name='universityId'
                         options={faculties.map((faculty) => (
                             {label: faculty.university.title, value: faculty.university.id}
                         ))}
@@ -133,14 +146,14 @@ const OrderForm = () => {
 
                 <FormItem top="Факультет">
                     <Select
-                        disabled={!orderState.university}
+                        disabled={!orderState.universityId}
                         placeholder="Не выбран"
-                        name='faculty'
-                        options={faculties.filter( (faculty) => {
-                           return faculty.university.id === +orderState.university
-                        } ).map((facultyItem) => (
+                        name='facultyId'
+                        options={faculties.filter((faculty) => {
+                            return faculty.university.id === +orderState.universityId
+                        }).map((facultyItem) => (
                             {label: facultyItem.title, value: facultyItem.id}
-                        ) )}
+                        ))}
                         onChange={(e) => {
                             handleChange(e)
                         }}
@@ -164,7 +177,7 @@ const OrderForm = () => {
                 <FormItem top="Тип задания">
                     <Select
                         placeholder="Не выбран"
-                        name='taskType'
+                        name='taskTypeId'
                         options={taskTypes.map((task) => (
                             {label: task.title, value: task.id}
                         ))}
@@ -180,7 +193,7 @@ const OrderForm = () => {
                         options={subjects.map((subject) => (
                             {label: subject.title, value: subject.id}
                         ))}
-                        name='taskType'
+                        name='subjectId'
                         onChange={(e) => {
                             handleChange(e)
                         }}
@@ -199,9 +212,9 @@ const OrderForm = () => {
                 <FormItem top="Срок выполнения">
                     <DatePicker
                         min={dates}
-                        name='deadline'
+                        name='dueDate'
                         onDateChange={(value) => {
-                            setOrderState({...orderState, deadline: value})
+                            setOrderState({...orderState, dueDate: value})
                         }}
                         dayPlaceholder="ДД"
                         monthPlaceholder="ММММ"
@@ -210,7 +223,6 @@ const OrderForm = () => {
                 </FormItem>
 
                 <Button
-                    disabled={!orderState.deadline}
                     onClick={submitForm}>Отправить</Button>
             </FormLayout>
         </Panel>
@@ -218,6 +230,6 @@ const OrderForm = () => {
 }
 
 
-export default OrderForm;
+export default withRouter(OrderForm);
 
 
